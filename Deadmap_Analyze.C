@@ -30,7 +30,7 @@ void Deadmap_Analyze( )
   means_dist->SetYTitle("Frequency");
 
   TH1F *widths_dist = new TH1F("widths_dist", "Pedestal Runs, Distribution of std. dev. ADC for each channel in TPC",100,-0.5,19.5);
-  TFile h_outfile("outfile.root", "RECREATE");
+  TFile h_outfile1("outfile1.root", "RECREATE");
  
   TNtuple *h_myTntuple=new TNtuple("h_myTntuple","Location Tntuple","sector_id:fee_id:channel_id");
   TNtuple *h_myTnt=new TNtuple("h_myTnt","MW Location Tntuple","sector_id:fee_id:channel_id:pedestal:noise");
@@ -51,12 +51,12 @@ void Deadmap_Analyze( )
     dead_ult[i] += dead[i]; //find dead channels
   }
 
-  h_outfile.cd();
+  h_outfile1.cd();
   h_myTntuple->Write();
   h_myTnt->Write();
   h_myTntt->Write();
   //  h_layercenters->Write();
-  h_outfile.Close();
+  h_outfile1.Close();
 
  }
 
