@@ -12,6 +12,6 @@ Deadmap_Analyze.C gives plots of sector ID, FEE ID, and Channel ID for dead chan
 
 Livemap_Analyze.C gives plots of sector ID, FEE, ID, and Channel ID for live channels only. The code to get total channels is present as comments but not needed since Deadmap_Analyze.C performs this.
 
-Sector_Analayze.C (sorry, analyze is spelled wrong) gives region ID which is the regions R1, R2, and R3 of each sector on the North and South sides of the TPC. This code gives the amount of dead channels in each region for each sector as well as the total number of channels respectively. The percentage of dead to channel is calculated in an excel file to provde a visualization of which sectors have high channel regions versus those that do not.
+Sector_Analayze.C (sorry, analyze is spelled wrong) gives region ID which is the regions R1, R2, and R3 of each sector on the North and South sides of the TPC. This code gives the amount of dead channels in each region for each sector as well as the total number of channels respectively. The percentage of dead channels to total channels is calculated in an excel file to provide a visualization of which sectors have high channel regions versus those that do not.
 
 Code is provided via Charles Hughes (Iowa State) for this figure.
