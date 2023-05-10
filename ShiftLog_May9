@@ -1,0 +1,115 @@
+This file contains personal notes for the shift May 9th to May 16th for shift running 16:00-0:00 on those dates.
+Shift Leader: Raghav Kunnawalkam Elayavalli
+Detector Operator: Jennifer James
+
+Shift Exchange (SL's): Benjamin Kimelman (Ben) -> Raghav Kunnawalkam Elayavalli (RKE/Raghav)
+Shift Exchance (DO's): Christopher Platte (Chris) -> Jennifer James (Jenn)
+
+Shift change - - - - - - - - - - - 
+
+Ben (12:42 5/9) - The current estimate is that we will be ready to turn everything back on at 2:30 or 3pm. 
+We'll start with the ECW bypass and then turn on the racks. 
+From there everything will be put into the state in the standing orders.
+
+AGS = Alternating Gradient Synchrotron
+
+Wenesday May 17th is first collisions - commisioning starts
+
+Beam-beam and zdc need to be up and running as before the shut of of racks
+Engineers moving cables over the week
+
+Shift Notes ~~~~~~
+Restricted access need key card to open internal gate after plug door
+
+Powered off the racks, alarms gone off but they are self-clearing
+
+Racks are not back up yet... hopefully this evening
+
+Detector operator computer shut down - need password to get in again after restart.
+
+Reopening through vision client launcher instructions are not up-to-date. Comment is in the shift log for now. 
+Password will be in the control room
+~~~~~~~~~~~~~~~~~~~
+
+HCal~~~~~~
+Hanpu took cosmics last night, high voltage was seen to dip low in one channel which triggered yellow in monitoring. 
+Take note if a channel goes low
+
+One channel shows a half-high channel that needs cabling work
+
+Replace the clock-master that was being repaired
+
+Test-pulse board needs to be replaced
+
+Data gets stuck on particular events - Martin P is working on that
+~~~~~~~~~~~~~~~~~~
+
+EMCAL~~~~~
+Missing biasing channels- diconnected cables but there is a group that needs to be evaluated still
+~~~~~~~~~~~~~~~~~~
+
+TPC~~~~~~
+Noise seems to have a new source of noise
+
+Seems to be grouped around sector 01 and 11 --- %%R2 region is running around 98% channel efficieny if looking at the old plots
+~~~~~~~~~~~~~~~~~~
+
+ZDC~~~~~~
+Need to be turned on now that they're unlocked
+~~~~~~~~~~~~~~~~~~
+
+- - - - - - - - - - - - - - - - - -
+
+WEST CARRIAGE IS NOW ONLINE
+
+Rack room humidity
+
+Shift Start: =================
+
+needs to be reported around 8:30PM
+-LPM Air
+-TPC gauges
+-TPOT gauges
+-Humidity/temp
+
+6 tabs need to be read off into the document Raghav will make
+LOGIN INFO::
+sPHENIX
+tat%zeit
+
+LV EMCal, HCal, INTT are on 17:23
+
+EADT CARRIAGE IS NOW ONLINE 18:03
+
+TPC Experts being contacted to power on the racks
+
+Expect TPC LV to start 19:15
+
+EMCal cooling SW is giving warning sound. Checked cooling tank with Dan. 
+Dan will refill the tank as instructed by EMCal Expert Rob. Completed 19:01
+
+Seems to be fluctuating still between 70% to 75%
+
+
+System cool on:
+
+36% humidity in rack room
+Gauges tapped and read 20:23
+
+EmCal NE dropped to 0% at 23:30 then went back up to 87.5%
+
+
+Turned off INTT LV and HV and then back on. Took about 3 min 47 sec for INTT HV to turn on fully
+
+--------
+
+Expert requested power on for high voltage INTT. Low voltage INTT was power cycled and checked beforehand. 
+
+Hand off to Brennan (SL) and Cheng-Hui (DO)
+
+End Shift- - - - - - - - - - - 
+
+
+
+
+
