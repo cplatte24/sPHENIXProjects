@@ -39,20 +39,20 @@ void Plot_Display2(){
  std::vector <pair<int,int>> vec;
 
 
- const TString filename3( Form( "/sphenix/u/jamesj3j3/workfest_Charles_mistake/sPHENIXProjects/outfile3.root") );
+ const TString filename3( Form( "/sphenix/u/jamesj3j3/workfest_Charles_mistake/sPHENIXProjects/outfile4.root") );
 
   //    std::cout << "Analyze - filename2: " << filename2 << std::endl;
   //
-  TFile *infile3 = new TFile(filename3);
+ TFile *infile3 = TFile::Open(filename3);
   //        TFile* infile2 = TFile::Open(filename2);
   //
   if(!infile3) return;
   //
   TNtuple * liveTntuple ;	
-  liveTntuple = (TNtuple*) infile3->Get("h_myTntuple");
+  liveTntuple = (TNtuple*) infile3->Get("h_Alive");
 
   TNtuple * totTntuple ;
-  totTntuple = (TNtuple*) infile3->Get("h_myTnt");
+  totTntuple = (TNtuple*) infile3->Get("h_AliveTot");
 
   TH2F * dm2 = new TH2F("dm2","TPC map", 26,-.5,25.5, 24, -.5, 23.5);
   liveTntuple->Draw("sec_id:fee_id>>dm2","","colz");
@@ -120,62 +120,70 @@ void Plot_Display2(){
   // beginning the module live fraction analysis
   std::vector <pair<int,int>> vec1;  
 
-  TH2F * dm3 = new TH2F("dm3","TPC map module", 24,-.5,23.5,3,0.5,3.5);
-  liveTntuple->Draw("module_id:sec_id>>dm3","","colz");
+  TH2F * dm3 = new TH2F("dm3","TPC map module", 26,-.5,25.5,3,0.5,3.5);
+  liveTntuple->Draw("module_id:fee_id>>dm3","","colz");
   //h3->Draw("colz");                                                                                   
 
-  dm3->Print("base");
+  dm3->Print("all");
 
-  for(Int_t i = 0; i < dm3->GetXaxis()->GetNbins(); i++  ){ // i is looping over Sec ID                 
-    for( Int_t j =0; j < dm3->GetYaxis()->GetNbins(); j++){// j is looping over Module ID               
-      if( dm3->GetBinContent(i+1,j+1) < 1 )
-        {vec1.push_back(make_pair(i,j));
-	  std::cout<<"ALL Channels Bad, SEC = "<<i+1<<", Module ID = "<<j+1<<std::endl;
-        }
+  
+
+  for(Int_t u = 0; u < dm3->GetXaxis()->GetNbins(); u++  ){ // u is looping over Sec ID                 
+    for( Int_t v =0; v < dm3->GetYaxis()->GetNbins(); v++){// v is looping over Module ID               
+       if( dm3->GetBinContent(u+1,v+1) < 1 ){
+	 vec1.push_back(make_pair(u,v));
+	 std::cout<<" Channels Bad, fee = "<<u+1<<", Module ID = "<<v+1<<std::endl;
+       }
     }
   }
-
+  
   Int_t module_id_tot_int, module_id_live_int;
-  totTntuple->SetBranchAddress("sec_id",&sec_id_tot);
-  totTntuple->SetBranchAddress("fee_id",&fee_id_tot);
-  totTntuple->SetBranchAddress("module_id",&module_id_tot);
 
-  liveTntuple->SetBranchAddress("sec_id",&sec_id_live);
-  liveTntuple->SetBranchAddress("fee_id",&fee_id_live);
-  liveTntuple->SetBranchAddress("module_id",&module_id_live);
+  // totTntuple->SetBranchAddress("sec_id",&sec_id_tot);
+  // totTntuple->SetBranchAddress("fee_id",&fee_id_tot);
+  // totTntuple->SetBranchAddress("module_id",&module_id_tot);
 
-  Float_t mod_numer[72] = {0}; // for counting lives
-  Float_t mod_denom[72] = {0}; // for counting totals
+  // liveTntuple->SetBranchAddress("sec_id",&sec_id_live);
+  // liveTntuple->SetBranchAddress("fee_id",&fee_id_live);
+  // liveTntuple->SetBranchAddress("module_id",&module_id_live);
 
-  for( UInt_t i = 0; i < liveTntuple->GetEntries(); i++ ){ //looping over the live channels              
+  Float_t mod_numer[1] = {0}; // for counting lives
+  Float_t mod_denom[1] = {0}; // for counting totals
+
+  // std::cout << "mod_numer=" << mod_numer[1] << std::endl;
+
+  cout<<""<<vec1.size()<<endl;
+
+  for( UInt_t u = 0; u < liveTntuple->GetEntries(); u++ ){ //looping over the live channels              
     //for( unsigned i = 0; i < 1; i++ ){ //looping over the live channels                                
-    liveTntuple->GetEntry(i);
+    liveTntuple->GetEntry(u);
 
-
-    for( unsigned int k = 0 ; k < vec1.size() ; k++ ){
+    //std::cout << "passed here"  << std::endl;
+    for(int w = 0 ; w < vec1.size() ; w++ ){
       module_id_live_int = Floats2Ints(module_id_live);
-      if(sec_id_live != vec1[k].first && module_id_live != vec1[k].second ){
+      //  std::cout << "u=" << u << "w" << w << "module_id_live_int" << module_id_live_int << std::endl;
+      if(fee_id_live != vec1[w].first && module_id_live != vec1[w].second ){
         mod_numer[module_id_live_int] = mod_numer[module_id_live_int] + 1;
       }
     }
 
   }
 
-  for( UInt_t j = 0; j < totTntuple->GetEntries(); j++ ){ //looping over the total channels              
-    totTntuple->GetEntry(j);
+  for( UInt_t v = 0; v < totTntuple->GetEntries(); v++ ){ //looping over the total channels              
+    totTntuple->GetEntry(v);
 
-    for( unsigned int l = 0 ; l < vec1.size() ; l++ ){
+    for( unsigned int z = 0 ; z < vec1.size() ; z++ ){
       module_id_tot_int = Floats2Ints(module_id_tot);
-      if(sec_id_tot != vec1[l].first && module_id_tot != vec1[l].second ){
+      if(fee_id_tot != vec1[z].first && module_id_tot != vec1[z].second ){
 	mod_denom[module_id_tot_int] = mod_denom[module_id_tot_int] + 1;
       }
 
     }
   }
 
-  for( unsigned int i = 0; i < 24; i++){std::cout << "Live Channel % in Sector "<<i<<" = " << (sec_numer[i]/sec_denom[i])*100 << std::endl;}
+  //  for( unsigned int i = 0; i < 24; i++){std::cout << "Live Channel % in Sector "<<i<<" = " << (sec_numer[i]/sec_denom[i])*100 << std::endl;}
 
-  for( unsigned int i = 0; i < 72; i++){std::cout << "Live Channel % in Module "<<i<<" = " << (mod_numer[i]/mod_denom[i])*100 << std::endl;}
+   for( unsigned int u = 0; u < 72; u++){std::cout << "Live Channel % in Module "<<u<<" = " << (mod_numer[u]/mod_denom[u])*100 << std::endl;}
  
   Double_t A_Side_Arr[36]=  { 97.9341150195422, 98.6314760508309, 96.6915688367129, 97.1508379888268, 98.8089330024814, 98.862828713575, 99.1056456120738, 96.9215491559086, 97.2982580874511, 95.8612975391499, 96.871945259042, 98.2355059416637, 96.5921787709497, 97.12158808933, 97.3424774967853, 97.2098214285714, 97.2113502935421, 97.2972972972973, 97.1540178571429, 96.9208211143695, 98.7917555081734, 99.7209821428571, 97.361993160723, 98.5080058224163, 98.8839285714286, 99.0224828934506, 98.9339019189766, 98.4933035714286, 97.6274608783443, 95.7310565635006, 99.2745535714286, 97.9139504563233, 97.120511908994, 98.21328866555, 94.9657869012708, 98.9331436699858 };
   Double_t C_Side_Arr[36] = { 98.3816964285714, 99.8347107438017, 98.3997155049787, 98.8833054159687, 98.3058210251955, 96.2989323843416, 96.8732551647124, 96.8288444830582, 97.9025950942055, 98.4375, 98.2893450635386, 98.045486851457, 99.4974874371859, 98.4344422700587, 97.6901208244492, 96.536312849162, 97.361993160723, 98.4002843938855, 98.9391401451703, 98.8269794721408, 98.7197724039829, 97.265625, 98.014888337469, 97.9374110953058, 98.9982321744255, 98.8095238095238, 98.7197724039829, 98.3240223463687, 98.4848484848485, 97.9033404406539, 97.1540178571429, 97.9482169027846, 98.0085348506401, 98.7716359575656, 98.1427174975562, 97.3444889050564 };
