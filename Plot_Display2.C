@@ -1,5 +1,5 @@
 // includes
-/*
+
 #ifndef __CINT__
 #include "TCanvas.h"
 #include "TApplication.h"
@@ -29,8 +29,7 @@
 #include <vector>
 #include <iostream>
 #endif
-*/
-/*
+
 using namespace std;
 
 void Locate(Int_t id, Double_t *rbin, Double_t *thbin);
@@ -38,8 +37,9 @@ Int_t Floats2Ints(Float_t);
 
 void Plot_Display2(){
 
-  // std::vector <pair<int,int>> vec;
+  std::vector <pair<int,int>> vec1;
 
+  std::vector<pair<int,int>> vec; 
 
  const TString filename3( Form( "/sphenix/u/jamesj3j3/workfest_Charles_mistake/sPHENIXProjects/outfile4.root") );
 
@@ -49,13 +49,13 @@ void Plot_Display2(){
   //        TFile* infile2 = TFile::Open(filename2);
   //
    if(!infile3) return;
-*/ //
-  // TNtuple * liveTntuple ;	
-  // liveTntuple = (TNtuple*) infile3->Get("h_Alive");
 
-  // TNtuple * totTntuple ;
-  // totTntuple = (TNtuple*) infile3->Get("h_AliveTot");
-  /*
+   TNtuple * liveTntuple ;	
+   liveTntuple = (TNtuple*) infile3->Get("h_Alive");
+
+   TNtuple * totTntuple ;
+   totTntuple = (TNtuple*) infile3->Get("h_AliveTot");
+  
   TH2F * dm2 = new TH2F("dm2","TPC map", 26,-.5,25.5, 24, -.5, 23.5);
   liveTntuple->Draw("sec_id:fee_id>>dm2","","colz");
   //h3->Draw("colz");
@@ -71,8 +71,8 @@ void Plot_Display2(){
     }
   }
 
-  //  std::cout << "live tntuple entries= " << liveTntuple->GetEntries() << std::endl;
-  // std::cout << "tot  tntuple entries= " << totTntuple->GetEntries() << std::endl;
+   std::cout << "live tntuple entries= " << liveTntuple->GetEntries() << std::endl;
+   std::cout << "tot  tntuple entries= " << totTntuple->GetEntries() << std::endl;
 
   Float_t sec_id_tot, fee_id_tot;
   Float_t sec_id_live, fee_id_live;
@@ -97,9 +97,9 @@ void Plot_Display2(){
     liveTntuple->GetEntry(i);
 
 
-    for( unsigned int k = 0 ; k < vec.size() ; k++ ){
+    for( unsigned int k = 0 ; k < vec1.size() ; k++ ){
       sec_id_live_int = Floats2Ints(sec_id_live);      
-      if(fee_id_live != vec[k].first && sec_id_live != vec[k].second ){ 
+      if(fee_id_live != vec1[k].first && sec_id_live != vec1[k].second ){ 
  	sec_numer[sec_id_live_int] = sec_numer[sec_id_live_int] + 1;
       }
     }
@@ -109,108 +109,43 @@ void Plot_Display2(){
   for( UInt_t j = 0; j < totTntuple->GetEntries(); j++ ){ //looping over the total channels
     totTntuple->GetEntry(j); 
  
-   for( unsigned int l = 0 ; l < vec.size() ; l++ ){
+   for( unsigned int l = 0 ; l < vec1.size() ; l++ ){
      sec_id_tot_int = Floats2Ints(sec_id_tot);
-     if(fee_id_tot != vec[l].first && sec_id_tot != vec[l].second ){
+     if(fee_id_tot != vec1[l].first && sec_id_tot != vec1[l].second ){
        sec_denom[sec_id_tot_int] = sec_denom[sec_id_tot_int] + 1;
      }
 
     }
   }
-  */
+
 
   // beginning the module live fraction analysis
-// std::vector <pair<int,int>> vec;
-// includes
-#ifndef __CINT__
-#include "TCanvas.h"
-#include "TApplication.h"
-#include "TH1D.h"
-#include "TH1F.h"
-#include "TH2D.h"
-#include "TH2F.h"
-#include "TH3D.h"
-#include "TString.h"
-#include "TStyle.h"
-#include "TFile.h"
-#include "TGraphPolar.h"
-#include "TGraphPolargram.h"
-#include "TAxis.h"
-#include "TLatex.h"
-#include "TLegend.h"
-#include "TApplication.h"
-#include "TCanvas.h"
-#include "TMath.h"
-#include "TVirtualFitter.h"
-#include "Math/MinimizerOptions.h"
-#include "TFitResultPtr.h"
-#include "TFitResult.h"
-#include "TF1.h"
-#include "TPaveLabel.h"
 
-#include "TNtuple.h"
-
-#include <string.h>
-#include <vector>
-#include <iostream>
-#endif
-  
-  using namespace std;
-
-  std::vector <pair<int,int>> vec;
-
-  void Locate(Int_t id, Double_t *rbin, Double_t *thbin);
-
-  Int_t Floats2Ints(Float_t);
-
-  void Plot_Display2(){
-
-    const TString filename2( Form( "/sphenix/u/jamesj3j3/workfest_Charles_mistake/sPHENIXProjects/outfile4.root") );
-
-  //  std::cout << "Analyze - filename3: " << filename2 << std::endl;                                                                                                                                                                                                                 
-  TFile *infile2 = TFile::Open(filename2);                                                                                           
-  if(!infile2) return;
-
-  TNtuple * liveTntuple=0;
-  std::cout << "passed here" << std::endl;
-
-  liveTntuple = (TNtuple*) infile2->Get("h_Alive");
-
-  TNtuple * totTntuple=0;
-
-  totTntuple = (TNtuple*) infile2->Get("h_AliveTot");
-
-  TH2F * mod = new TH2F("mod","TPC map module", 26,-.5,25.5,3,0.5,3.5);
+  TH2F * mod = new TH2F("mod","TPC map module", 78,-.5,78.5,3,0.5,3.5);
   liveTntuple->Draw("module_id:fee_id>>mod","","colz");
 
   //h3->Draw("colz");                                                                                   
 
   mod->Print();
 
-  totTntuple->Print();
-  totTntuple->GetEntries();
-  liveTntuple->Print();
-  liveTntuple->GetEntries();
-  
-
-  for(Int_t i = 0; i < mod->GetXaxis()->GetNbins(); i++){ // u is looping over Sec ID                 
-    for( Int_t j =0; j < mod->GetYaxis()->GetNbins(); j++){// v is looping over Module ID               
-      //   if( mod->GetBinContent(i+1,j+1) < 1 ){
-	 vec.push_back(make_pair(i,j));
-	 // std::cout<<" Channels Bad, fee = "<<i+1<<", Module ID = "<<j+1<<std::endl;
-	 //  }
+ 
+  for(Int_t i = 0; i < mod->GetXaxis()->GetNbins(); i++){ // i is looping over fee ID                 
+    for( Int_t j =0; j < mod->GetYaxis()->GetNbins(); j++){// j is looping over Module ID               
+      //  if( mod->GetBinContent(i+1,j+1) < 1 ){
+      //	 vec.push_back(make_pair(i,j));
+      // std::cout<<"vec.push_back"<< i<<std::endl;
+      //  std::cout<<" Channels Bad, fee = "<<i+1<<", Module ID = "<<j+1<<std::endl;
+	  // }
     }
   }
 
-  std::cout <<" vector size" << vec.size() << std::endl; 
+  // std::cout <<" vector size" << vec.size() << std::endl; 
 
-  Float_t sec_id_tot, fee_id_tot, module_id_tot;
-  Float_t sec_id_live, fee_id_live, module_id_live;  
+  Float_t module_id_tot;
+  Float_t module_id_live;  
   
 
   Int_t module_id_tot_int, module_id_live_int;
-  totTntuple->SetBranchAddress("fee_id",&fee_id_tot);
-  liveTntuple->SetBranchAddress("fee_id",&fee_id_live);
   totTntuple->SetBranchAddress("module_id",&module_id_tot);
   liveTntuple->SetBranchAddress("module_id",&module_id_live);
  
@@ -218,28 +153,11 @@ void Plot_Display2(){
    Float_t module_numer[78] = {0}; // for counting lives                                                                                                                
    Float_t module_denom[78] = {0}; // for counting totals
 
-    
-  /*
-    Float_t  module_numer[] = {vec}, i = 0;
-    cout<<"Print module_numer[78] = "<<module_numer[78]<<"\nPrint i = "<<i;
-
-    return 0;
-
-    Float_t  module_denom[] = {vec}, j = 0;
-    cout<<"Print module_denom[78] = "<<module_denom[78]<<"\nPrint j = "<<j;
-
-    return 0;
- 
-*/
 
   for( UInt_t i = 0; i < liveTntuple->GetEntries(); i++ ){ //looping over the live channels                                                   
     // for( unsigned i = 0; i < 1; i++ ){ //looping over the live channels                                                                     
-    liveTntuple->GetEntry(i);                                                                                                                 
-                                                                                                                                              
-                                                                                                                                              
-    for( unsigned int k = 0 ; k < vec.size() ; k++ ){                                                                                         
-      module_id_live_int = Floats2Ints(module_id_live);                                                                                             
-      if(fee_id_live != vec[k].first && module_id_live != vec[k].second ){                                                                    
+    liveTntuple->GetEntry(i);                                                                                        for( unsigned int k = 0 ; k < vec.size() ; k++ ){                                                                    module_id_live_int = Floats2Ints(module_id_live);                               
+      if(fee_id_live != vec[k].first && module_id_live != vec[k].second ){ 
           module_numer[module_id_live_int] = module_numer[module_id_live_int] + 1;                                                                          
          }
       }                                                                                                                                       
@@ -247,8 +165,7 @@ void Plot_Display2(){
  
                                                                                                                                             
   for( UInt_t j = 0; j < totTntuple->GetEntries(); j++ ){ //looping over the total channels                                                   
-    totTntuple->GetEntry(j);                                                                                                                  
-                                                                                                                                            
+    totTntuple->GetEntry(j);                                                                                                                
     for( unsigned int l = 0 ; l < vec.size() ; l++ ){                                                                                
       module_id_tot_int = Floats2Ints(module_id_tot);                                                                                         
       if(fee_id_tot != vec[l].first && module_id_tot != vec[l].second ){                                                                      
@@ -256,7 +173,7 @@ void Plot_Display2(){
       }                                                                                                                                       
                                                                                                                                              
     }                                                                                                                                          
-  }                                                                                                                                            //  for( unsigned int i = 0; i < 24; i++){std::cout << "Live Channel % in Sector "<<i<<" = " << (sec_numer[i]/sec_denom[i])*100 << std::endl;}
+  }                                                                                                               //  for( unsigned int i = 0; i < 24; i++){std::cout << "Live Channel % in Sector "<<i<<" = " << (sec_numer[i]/sec_denom[i])*100 << std::endl;}
 
    for( unsigned int i = 0; i < 78; i++){std::cout << "Live Channel % in Module "<<i<<" = " << (module_numer[i]/module_denom[i])*100 << std::endl;}
    for( unsigned int i = 0; i < 78; i++){std::cout << "Live Channel in Module "<<i<<" = " << module_numer[i] << std::endl;}
