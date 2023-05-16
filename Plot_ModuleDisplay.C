@@ -79,43 +79,21 @@ void Plot_ModuleDisplay(){
       Float_t denom = tot->GetBinContent(i+1, j+1); // denominator (total)                                                              
       Float_t frac_val = (num / denom) * 100.0; // calculate the fraction                                                                
 
-      frac[i][j] = frac_val; // store fraction in array                                                                              
-      std::cout << "Fee ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
-      if (i < 36) {
+      frac[i+1][j+1] = frac_val; // store fraction in array                                                                              
+      std::cout << "Sec ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
+      if (i < 12) {
 	sub_arrC.push_back(frac_val);
-	std::cout <<  " Live fraction C = " << sub_arrC.size() << " %" << std::endl;
+	//	std::cout <<  " Live fraction C = " << sub_arrC.size() << " %" << std::endl;
       }	else {
 	sub_arrA.push_back(frac_val);
-	std::cout <<  " Live fraction A = " << sub_arrA.size() <<" %" << std::endl;
+	//	std::cout <<  " Size = " << sub_arrA.size() <<" %" << std::endl;
        }
      
     }
   }
- 
+  std::cout <<  " Size A = " << sub_arrA.size() << std::endl;
+  std::cout <<  " Size C = " << sub_arrC.size() << std::endl;
 
-  /*
- std::vector<float> frac_val;
-
-  Float_t frac[dm2->GetNbinsX()][dm2->GetNbinsY()]; // array to store fractions
-
-  for (Int_t i = 1; i <= dm2->GetNbinsX(); i++) { // i is looping over fee ID                                                         
-    for (Int_t j = 1; j <= dm2->GetNbinsY(); j++) { // j is looping over Module ID                                                    
-      Float_t num = dm2->GetBinContent(i, j); // numerator (live)                                                                     
-      Float_t denom = tot->GetBinContent(i, j); // denominator (total)                                                                
-      Float_t frac_val = (num / denom) * 100.0; // calculate the fraction   
-        frac[i-1][j-1] = frac_val; // store fraction in array
-        std::cout << "Fee ID = " << i << ", Module ID = " << j << ", Live fraction = " << frac_val << "%" << std::endl;
-	//	Float_t sub_arrA = frac_val[i < 37];
-	//	Float_t sub_arrC = frac_val[i >= 37];    
-	// }
-    // }
-    std::vector<float> sub_arrA(frac_val.begin() + 36, frac_val.begin() + 72);
-    std::vector<float> sub_arrC(frac_val.begin(), frac_val.begin() + 36);
-    sub_arrA.push_back(frac_val[i]);
-    sub_arrC.push_back(frac_val[i]);
-    }
-  }
-  */
   //////////////////////////////////////////////////////////////////////// 
   //       A Side   South Label Conventions                                  //  
   ///////////////////////////////////////////////////////////////////////  
@@ -227,18 +205,18 @@ void Plot_ModuleDisplay(){
     Double_t r, theta;
     Int_t trip_count_total = 0;
 
-    for(Int_t i = 1; i < 73 ; i++){
+    for(Int_t i = 1; i < 37 ; i++){
 
       Locate(i, &r, &theta);
       //cout << "r is: "<< r <<" theta is: "<< theta <<"\n";
 
-      if(i < 37){ //C side
-	ErrCSide->Fill(theta, r, sub_arrC.at(i-1));
+      if(i < 18){ //C side
+	ErrCSide->Fill(theta, r, sub_arrA.at(i-1));
 	//	ErrCSide->Fill(theta,r,sub_arrA[i-1]); //fill C side with the weight = bin content
 	//      cout<<"Region # "<<(i-1)<<" Alive Fraction = "<<A_Side_Arr[i-1]<<endl;
       }
-      else if(i >= 37){ //A side
-	ErrASide->Fill(theta, r, sub_arrA.at(i-37));
+      else if(i >= 18){ //A side
+	ErrASide->Fill(theta, r, sub_arrC.at(i-1));
 	//	ErrASide->Fill(theta,r,sub_arrC[i-1]); //fill A side with the weight = bin content
 	//    cout<<"Region # "<<(i-1)<<" Alive Fraction = "<<C_Side_Arr[i-37]<<endl;
       }
@@ -391,11 +369,11 @@ void Locate(Int_t id, Double_t *rbin, Double_t *thbin) {
     break;
   }
 
-  if( id < 37){
+  if( id < 13){
     *thbin = CSIDE_angle_bins[TMath::FloorNint((id-1)/3)];
   }
-  else if( id >= 37){
-    *thbin = ASIDE_angle_bins[TMath::FloorNint((id-37)/3)];
+  else if( id >= 13){
+    *thbin = ASIDE_angle_bins[TMath::FloorNint((id-25)/3)];
   }
 
 
