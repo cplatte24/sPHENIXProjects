@@ -28,12 +28,13 @@
 #include <string.h>	
 #include <vector>
 #include <iostream>
+#include <RtypesCore.h>
 #endif
 
 using namespace std;
 
 void Locate(Int_t id, Double_t *rbin, Double_t *thbin);
-Int_t Floats2Ints(Float_t);
+
 
 void Plot_ModuleDisplay(){
 
@@ -66,26 +67,31 @@ void Plot_ModuleDisplay(){
   dm2->Print();
   tot->Print();
 
-  std::vector<float> frac_val;
-  std::vector<float> sub_arrA;
-  std::vector<float> sub_arrC;
+  // std::vector<Float_t> frac_val;
+   std::vector<Float_t> sub_arrA;
+   std::vector<Float_t> sub_arrC;
+  //  Float_t sub_arrA, sub_arrC;
 
   Float_t frac[dm2->GetNbinsX()][dm2->GetNbinsY()]; // array to store fractions                                                           
-  for (Int_t i = 1; i <= dm2->GetNbinsX(); i++) { // i is looping over sec ID                                                             
-    for (Int_t j = 1; j <= dm2->GetNbinsY(); j++) { // j is looping over Module ID                                                        
-      Float_t num = dm2->GetBinContent(i, j); // numerator (live)                                                                         
-      Float_t denom = tot->GetBinContent(i, j); // denominator (total)                                                                    
+  for (Int_t i = 0; i < dm2->GetNbinsX(); i++) { // i is looping over sec ID                                                             
+    for (Int_t j = 0; j < dm2->GetNbinsY(); j++) { // j is looping over Module ID                                                        
+      Float_t num = dm2->GetBinContent(i+1, j+1); // numerator (live)                                                                     
+      Float_t denom = tot->GetBinContent(i+1, j+1); // denominator (total)                                                              
       Float_t frac_val = (num / denom) * 100.0; // calculate the fraction                                                                
- 
-      frac[i-1][j-1] = frac_val; // store fraction in array                                                                              
-      std::cout << "Fee ID = " << i << ", Module ID = " << j << ", Live fraction = " << frac_val << "%" << std::endl;
-      if (i < 37) {
+
+      frac[i][j] = frac_val; // store fraction in array                                                                              
+      std::cout << "Fee ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
+      if (i < 36) {
 	sub_arrC.push_back(frac_val);
-      } else {
+	std::cout <<  " Live fraction C = " << sub_arrC.size() << " %" << std::endl;
+      }	else {
 	sub_arrA.push_back(frac_val);
-      }
+	std::cout <<  " Live fraction A = " << sub_arrA.size() <<" %" << std::endl;
+       }
+     
     }
   }
+ 
 
   /*
  std::vector<float> frac_val;
@@ -227,11 +233,13 @@ void Plot_ModuleDisplay(){
       //cout << "r is: "<< r <<" theta is: "<< theta <<"\n";
 
       if(i < 37){ //C side
-	ErrCSide->Fill(theta,r,sub_arrA[i-1]); //fill C side with the weight = bin content
+	ErrCSide->Fill(theta, r, sub_arrC.at(i-1));
+	//	ErrCSide->Fill(theta,r,sub_arrA[i-1]); //fill C side with the weight = bin content
 	//      cout<<"Region # "<<(i-1)<<" Alive Fraction = "<<A_Side_Arr[i-1]<<endl;
       }
       else if(i >= 37){ //A side
-	ErrASide->Fill(theta,r,sub_arrC[i-1]); //fill A side with the weight = bin content
+	ErrASide->Fill(theta, r, sub_arrA.at(i-37));
+	//	ErrASide->Fill(theta,r,sub_arrC[i-1]); //fill A side with the weight = bin content
 	//    cout<<"Region # "<<(i-1)<<" Alive Fraction = "<<C_Side_Arr[i-37]<<endl;
       }
  
@@ -361,8 +369,6 @@ void Plot_ModuleDisplay(){
     //delete sparsforVIZ;
 
     outf->Write();
-
-
 }
 
 void Locate(Int_t id, Double_t *rbin, Double_t *thbin) {
@@ -394,6 +400,7 @@ void Locate(Int_t id, Double_t *rbin, Double_t *thbin) {
 
 
 }
+/*
 
 Int_t Floats2Ints( Float_t f = 1 ){
  
@@ -426,3 +433,4 @@ Int_t Floats2Ints( Float_t f = 1 ){
   return i;
 
 }
+*/
