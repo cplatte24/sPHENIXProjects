@@ -73,11 +73,11 @@ void Plot_ModuleDisplay(){
   //  Float_t sub_arrA, sub_arrC;
 
   Float_t frac[dm2->GetNbinsX()][dm2->GetNbinsY()]; // array to store fractions                                                           
-  for (Int_t i = 0; i < dm2->GetNbinsX(); i++) { // i is looping over sec ID                                                             
+  for (Int_t i = 0; i < dm2->GetNbinsX(); i++) { // i is looping over sec ID                                                           
     for (Int_t j = 0; j < dm2->GetNbinsY(); j++) { // j is looping over Module ID                                                        
       Float_t num = dm2->GetBinContent(i+1, j+1); // numerator (live)                                                                     
       Float_t denom = tot->GetBinContent(i+1, j+1); // denominator (total)                                                              
-      Float_t frac_val = (num / denom) * 100.0; // calculate the fraction                                                                
+      Float_t frac_val= ( num / denom) * 100.0; // calculate the fraction                                                                
 
       frac[i+1][j+1] = frac_val; // store fraction in array                                                                              
       std::cout << "Sec ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
@@ -205,23 +205,23 @@ void Plot_ModuleDisplay(){
     Double_t r, theta;
     Int_t trip_count_total = 0;
 
-    for(Int_t i = 1; i < 37 ; i++){
+    for(Int_t i = 1; i < 36 ; i++){
 
       Locate(i, &r, &theta);
       //cout << "r is: "<< r <<" theta is: "<< theta <<"\n";
 
-      if(i < 18){ //C side
+      //  if(i < 12){ //C side
 	ErrCSide->Fill(theta, r, sub_arrA.at(i-1));
 	//	ErrCSide->Fill(theta,r,sub_arrA[i-1]); //fill C side with the weight = bin content
 	//      cout<<"Region # "<<(i-1)<<" Alive Fraction = "<<A_Side_Arr[i-1]<<endl;
-      }
-      else if(i >= 18){ //A side
+	// }
+	// else if(i >= 12){ //A side
 	ErrASide->Fill(theta, r, sub_arrC.at(i-1));
 	//	ErrASide->Fill(theta,r,sub_arrC[i-1]); //fill A side with the weight = bin content
 	//    cout<<"Region # "<<(i-1)<<" Alive Fraction = "<<C_Side_Arr[i-37]<<endl;
-      }
+	//      }
  
-    }
+       	  }
 
 
     TH2D* dummy_his1 = new TH2D("dummy1", "Alive Channel Fraction North Side (%)", 100, -1.5, 1.5, 100, -1.5, 1.5); //dummy histos for titles
