@@ -80,19 +80,22 @@ void Plot_ModuleDisplay(){
       Float_t frac_val= ( num / denom) * 100.0; // calculate the fraction                                                                
 
       frac[i+1][j+1] = frac_val; // store fraction in array                                                                              
-      std::cout << "Sec ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
+      //   std::cout << "Sec ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
       if (i < 12) {
 	sub_arrC.push_back(frac_val);
 	//	std::cout <<  " Live fraction C = " << sub_arrC.size() << " %" << std::endl;
+	//	std::cout << "sub_arrC[" << i << "] = " << frac_val << std::endl;
       }	else {
 	sub_arrA.push_back(frac_val);
+	//	std::cout << "sub_arrA[" << i << "] = " << frac_val << std::endl;
 	//	std::cout <<  " Size = " << sub_arrA.size() <<" %" << std::endl;
        }
      
     }
-  }
-  std::cout <<  " Size A = " << sub_arrA.size() << std::endl;
-  std::cout <<  " Size C = " << sub_arrC.size() << std::endl;
+  } 
+  // std::cout << "Live Fraction =" << frac_val << std::endl;
+  // std::cout <<  " Size A = " << sub_arrA.size() << std::endl;
+  // std::cout <<  " Size C = " << sub_arrC.size() << std::endl;
 
   //////////////////////////////////////////////////////////////////////// 
   //       A Side   South Label Conventions                                  //  
@@ -134,18 +137,10 @@ void Plot_ModuleDisplay(){
 
 
     gStyle->SetOptStat(0);
-    /*
-  const char * input1="Master_Sparse.root"; //file where sparse is stored
-
-  TFile * infile1 = TFile::Open(input1); //open the file
-  
-  if(!infile1){ //make sure you have the file in your directory
-  cout<<input1<<" not found"<<endl;
-    return;
-  }
-
+   
    // if have lists inside input file - create pointer to list
-  // Open up the histograms from the infile and give new names
+ 
+    /* // Open up the histograms from the infile and give new names
   THnSparseD* sparse = (THnSparseD *)infile1->Get("histsparse"); //get the sparse object and store it in memory
   if(!sparse){
   cout<<"sparse does not exist in "<<input1<<endl; //double check that it's in the file it should be !
@@ -205,30 +200,21 @@ void Plot_ModuleDisplay(){
     Double_t r, theta;
     Int_t trip_count_total = 0;
 
-    for(Int_t i = 1; i < 36 ; i++){
+    for (Int_t i = 0; i < 36; i++) {
+      Locate(i + 1, &r, &theta);
+      ErrASide->Fill(theta, r, sub_arrA[i]);
+      // cout<<"Region # A "<<(i)<<" Alive Fraction = "<<sub_arrA[i]<<endl;   
+ }
+    for (Int_t i = 0; i < 36; i++) {
+      Locate(i + 1, &r, &theta);
+      ErrCSide->Fill(theta, r, sub_arrC[i]);
+      // cout<<"Region # C "<<(i)<<" Alive Fraction = "<<sub_arrC[i]<<endl;   
+ }
 
-      Locate(i, &r, &theta);
-      //cout << "r is: "<< r <<" theta is: "<< theta <<"\n";
-
-      //  if(i < 12){ //C side
-	ErrCSide->Fill(theta, r, sub_arrA.at(i-1));
-	//	ErrCSide->Fill(theta,r,sub_arrA[i-1]); //fill C side with the weight = bin content
-	//      cout<<"Region # "<<(i-1)<<" Alive Fraction = "<<A_Side_Arr[i-1]<<endl;
-	// }
-	// else if(i >= 12){ //A side
-	ErrASide->Fill(theta, r, sub_arrC.at(i-1));
-	//	ErrASide->Fill(theta,r,sub_arrC[i-1]); //fill A side with the weight = bin content
-	//    cout<<"Region # "<<(i-1)<<" Alive Fraction = "<<C_Side_Arr[i-37]<<endl;
-	//      }
- 
-       	  }
-
-
+  
     TH2D* dummy_his1 = new TH2D("dummy1", "Alive Channel Fraction North Side (%)", 100, -1.5, 1.5, 100, -1.5, 1.5); //dummy histos for titles
     TH2D* dummy_his2 = new TH2D("dummy2", "Alive Channel Fraction South Side (%)", 100, -1.5, 1.5, 100, -1.5, 1.5);
     //TPaveLabels for sector labels
-
-
     TPaveLabel* A00 = new TPaveLabel( 1.046586,-0.1938999,1.407997,0.2144871, "18" );
     TPaveLabel* A01 = new TPaveLabel( 0.962076,0.4382608,1.323487,0.8466479 , "17" );
     TPaveLabel* A02 = new TPaveLabel( 0.4801947,0.8802139,0.8416056,1.288601 , "16" );
@@ -321,8 +307,8 @@ void Plot_ModuleDisplay(){
     ErrCSide->SetMaximum(100);
     ErrASide->SetMaximum(100);
 
-    ErrCSide->SetMinimum(90);
-    ErrASide->SetMinimum(90);
+    ErrCSide->SetMinimum(70);
+    ErrASide->SetMinimum(70);
   
 
     //Set Same Scale for A and C side displays
@@ -334,7 +320,10 @@ void Plot_ModuleDisplay(){
     //ErrASide->SetMinimum(0);
     //ErrCSide->SetMinimum(0);
 
-
+    //  std::cout <<"A Side Entries=" << ErrASide->GetBinContent() << std::endl;
+    // std::cout <<"C Side Entries=" << ErrCSide->GetBinContent() << std::endl;
+    // std::cout <<" Min A Side Bin" << ErrASide->GetMinimumBin() << std::endl;
+    // std::cout <<" Min C Side Bin" << ErrCSide->GetMinimumBin() << std::endl;
 
     //____________________________________________________________________________________________________// 
 
@@ -369,46 +358,14 @@ void Locate(Int_t id, Double_t *rbin, Double_t *thbin) {
     break;
   }
 
-  if( id < 13){
+
+  if( id < 37){
     *thbin = CSIDE_angle_bins[TMath::FloorNint((id-1)/3)];
   }
-  else if( id >= 13){
-    *thbin = ASIDE_angle_bins[TMath::FloorNint((id-25)/3)];
+  else if( id >= 37){
+    *thbin = ASIDE_angle_bins[TMath::FloorNint((id-37)/3)];
   }
 
 
 }
-/*
 
-Int_t Floats2Ints( Float_t f = 1 ){
- 
-  Int_t i = 0;
-  
-  if(f==0){i = 0;}
-  else if(f==1){i = 1;}
-  else if(f==2){i = 2;}
-  else if(f==3){i = 3;}
-  else if(f==4){i = 4;}
-  else if(f==5){i = 5;}
-  else if(f==6){i = 6;}
-  else if(f==7){i = 7;}
-  else if(f==8){i = 8;}
-  else if(f==9){i = 9;}
-  else if(f==10){i = 10;}
-  else if(f==11){i = 11;}
-  else if(f==12){i = 12;}
-  else if(f==13){i = 13;}
-  else if(f==14){i = 14;}
-  else if(f==15){i = 15;}
-  else if(f==16){i = 16;}
-  else if(f==17){i = 17;}
-  else if(f==18){i = 18;}
-  else if(f==19){i = 19;}
-  else if(f==20){i = 20;}
-  else if(f==21){i = 21;}
-  else if(f==22){i = 22;}
-  else if(f==23){i = 23;}    
-  return i;
-
-}
-*/
