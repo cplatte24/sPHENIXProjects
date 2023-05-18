@@ -1,6 +1,7 @@
 // includes
 
 #ifndef __CINT__
+#include <algorithm>
 #include "TCanvas.h"
 #include "TApplication.h"
 #include "TH1D.h"
@@ -33,10 +34,10 @@
 
 using namespace std;
 
-void Locate(Int_t id, Double_t *rbin, Double_t *thbin);
+ void Locate(Int_t id, Bool_t is_ASIDE, Double_t *rbin, Double_t *thbin);
 
 
-void Plot_ModuleDisplay(){
+ void Plot_ModuleDisplay(){
 
   //  std::vector <pair<int,int>> vec1;
 
@@ -65,22 +66,26 @@ void Plot_ModuleDisplay(){
   //h3->Draw("colz");
 
   dm2->Print();
-  tot->Print();
+  tot->Print(); 
 
   // std::vector<Float_t> frac_val;
    std::vector<Float_t> sub_arrA;
    std::vector<Float_t> sub_arrC;
-  //  Float_t sub_arrA, sub_arrC;
+ 
 
   Float_t frac[dm2->GetNbinsX()][dm2->GetNbinsY()]; // array to store fractions                                                           
   for (Int_t i = 0; i < dm2->GetNbinsX(); i++) { // i is looping over sec ID                                                           
-    for (Int_t j = 0; j < dm2->GetNbinsY(); j++) { // j is looping over Module ID                                                        
-      Float_t num = dm2->GetBinContent(i+1, j+1); // numerator (live)                                                                     
-      Float_t denom = tot->GetBinContent(i+1, j+1); // denominator (total)                                                              
+    //    if(fee->GetBinContent(i)<1){
+    // continue;
+    // }
+    for (Int_t j = 0; j < dm2->GetNbinsY(); j++) { // j is looping over Module ID                                                       
+  
+      Float_t num = dm2->GetBinContent(i+1, j+1); // numerator (live)                                      
+      Float_t denom = tot->GetBinContent(i+1, j+1); // denominator (total)                                                                       
       Float_t frac_val= ( num / denom) * 100.0; // calculate the fraction                                                                
 
       frac[i+1][j+1] = frac_val; // store fraction in array                                                                              
-      //   std::cout << "Sec ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
+      std::cout << "Sec ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
       if (i < 12) {
 	sub_arrC.push_back(frac_val);
 	//	std::cout <<  " Live fraction C = " << sub_arrC.size() << " %" << std::endl;
@@ -89,10 +94,10 @@ void Plot_ModuleDisplay(){
 	sub_arrA.push_back(frac_val);
 	//	std::cout << "sub_arrA[" << i << "] = " << frac_val << std::endl;
 	//	std::cout <<  " Size = " << sub_arrA.size() <<" %" << std::endl;
-       }
-     
+     }    
     }
-  } 
+   }
+ 
   // std::cout << "Live Fraction =" << frac_val << std::endl;
   // std::cout <<  " Size A = " << sub_arrA.size() << std::endl;
   // std::cout <<  " Size C = " << sub_arrC.size() << std::endl;
@@ -196,21 +201,22 @@ void Plot_ModuleDisplay(){
     TH2D* ErrCSide = new TH2D( "CSide" , "ADC Counts South Side" , N_thBins, -TMath::Pi()/12. , 23.*TMath::Pi()/12. , N_rBins , rBin_edges ); // X maps to theta, Y maps to R
 
 
-
     Double_t r, theta;
     Int_t trip_count_total = 0;
+    Bool_t is_ASIDE = true;
 
     for (Int_t i = 0; i < 36; i++) {
-      Locate(i + 1, &r, &theta);
+      Locate(i + 1, true, &r, &theta);
       ErrASide->Fill(theta, r, sub_arrA[i]);
       // cout<<"Region # A "<<(i)<<" Alive Fraction = "<<sub_arrA[i]<<endl;   
  }
+
     for (Int_t i = 0; i < 36; i++) {
-      Locate(i + 1, &r, &theta);
+      Locate(i + 1,false, &r, &theta);
       ErrCSide->Fill(theta, r, sub_arrC[i]);
       // cout<<"Region # C "<<(i)<<" Alive Fraction = "<<sub_arrC[i]<<endl;   
  }
-
+   
   
     TH2D* dummy_his1 = new TH2D("dummy1", "Alive Channel Fraction North Side (%)", 100, -1.5, 1.5, 100, -1.5, 1.5); //dummy histos for titles
     TH2D* dummy_his2 = new TH2D("dummy2", "Alive Channel Fraction South Side (%)", 100, -1.5, 1.5, 100, -1.5, 1.5);
@@ -338,12 +344,16 @@ void Plot_ModuleDisplay(){
     outf->Write();
 }
 
-void Locate(Int_t id, Double_t *rbin, Double_t *thbin) {
-
-  Double_t CSIDE_angle_bins[12] = { 0.1*2.*TMath::Pi()/12 , 1.1*2.*TMath::Pi()/12 , 2.1*2.*TMath::Pi()/12 , 3.1*2.*TMath::Pi()/12 , 4.1*2.*TMath::Pi()/12 , 5.1*2.*TMath::Pi()/12 , 6.1*2.*TMath::Pi()/12 , 7.1*2.*TMath::Pi()/12 , 8.1*2.*TMath::Pi()/12 , 9.1*2.*TMath::Pi()/12 , 10.1*2.*TMath::Pi()/12 , 11.1*2.*TMath::Pi()/12 }; //CCW from x = 0 (RHS horizontal)
-
-  Double_t ASIDE_angle_bins[12] = { 6.1*2.*TMath::Pi()/12 , 5.1*2.*TMath::Pi()/12 , 4.1*2.*TMath::Pi()/12 , 3.1*2.*TMath::Pi()/12 , 2.1*2.*TMath::Pi()/12 , 1.1*2.*TMath::Pi()/12 , 0.1*2.*TMath::Pi()/12 , 11.1*2.*TMath::Pi()/12 , 10.1*2.*TMath::Pi()/12 , 9.1*2.*TMath::Pi()/12 , 8.1*2.*TMath::Pi()/12 , 7.1*2.*TMath::Pi()/12  }; //CCW from x = 0 (RHS horizontal)
-
+void Locate(Int_t id, Bool_t is_ASIDE, Double_t *rbin, Double_t *thbin) {
+  
+  Double_t ASIDE_angle_bins[12] = { 0.1*2.*TMath::Pi()/12 , 1.1*2.*TMath::Pi()/12 , 2.1*2.*TMath::Pi()/12 , 3.1*2.*TMath::Pi()/12 , 4.1*2.*TMath::Pi()/12 , 5.1*2.*TMath::Pi()/12 , 6.1*2.*TMath::Pi()/12 , 7.1*2.*TMath::Pi()/12 , 8.1*2.*TMath::Pi()/12 , 9.1*2.*TMath::Pi()/12 , 10.1*2.*TMath::Pi()/12 , 11.1*2.*TMath::Pi()/12 }; //CCW from x = 0 (RHS horizontal)
+  /*
+  Double_t CSIDE_angle_bins[12] = { 0.1*2.*TMath::Pi()/12 , 1.1*2.*TMath::Pi()/12 , 2.1*2.*TMath::Pi()/12 , 3.1*2.*TMath::Pi()/12 , 4.1*2.*TMath::Pi()/12 , 5.1*2.*TMath::Pi()/12 , 6.1*2.*TMath::Pi()/12 , 7.1*2.*TMath::Pi()/12 , 8.1*2.*TMath::Pi()/12 , 9.1*2.*TMath::Pi()/12 , 10.1*2.*TMath::Pi()/12 , 11.1*2.*TMath::Pi()/12 }; // CW from x = 0 (RHS horizontal)*/
+                 
+    Double_t CSIDE_angle_bins[12] = { 6.1*2.*TMath::Pi()/12 , 5.1*2.*TMath::Pi()/12 , 4.1*2.*TMath::Pi()/12 , 3.1*2.*TMath::Pi()/12 , 2.1*2.*TMath::Pi()/12 , 1.1*2.*TMath::Pi()/12 , 0.1*2.*TMath::Pi()/12 , 11.1*2.*TMath::Pi()/12 , 10.1*2.*TMath::Pi()/12 , 9.1*2.*TMath::Pi()/12 , 8.1*2.*TMath::Pi()/12 , 7.1*2.*TMath::Pi()/12  }; //CCW from x = 0 (RHS horizontal)
+    /*
+    Double_t ASIDE_angle_bins[12] = { 6.1*2.*TMath::Pi()/12 , 5.1*2.*TMath::Pi()/12 , 4.1*2.*TMath::Pi()/12 , 3.1*2.*TMath::Pi()/12 , 2.1*2.*TMath::Pi()/12 , 1.1*2.*TMath::Pi()/12 , 0.1*2.*TMath::Pi()/12 , 11.1*2.*TMath::Pi()/12 , 10.1*2.*TMath::Pi()/12 , 9.1*2.*TMath::Pi()/12 , 8.1*2.*TMath::Pi()/12 , 7.1*2.*TMath::Pi()/12  }; //CCW from x = 0 (RHS horizontal)
+*/ 
   Int_t modid3 = id % 3;
 
   switch(modid3) {
@@ -359,13 +369,12 @@ void Locate(Int_t id, Double_t *rbin, Double_t *thbin) {
   }
 
 
-  if( id < 37){
+  if( is_ASIDE ){
     *thbin = CSIDE_angle_bins[TMath::FloorNint((id-1)/3)];
   }
-  else if( id >= 37){
-    *thbin = ASIDE_angle_bins[TMath::FloorNint((id-37)/3)];
+  else{
+    *thbin = ASIDE_angle_bins[TMath::FloorNint((id-1)/3)];
   }
-
 
 }
 
