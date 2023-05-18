@@ -71,7 +71,7 @@ using namespace std;
   // std::vector<Float_t> frac_val;
    std::vector<Float_t> sub_arrA;
    std::vector<Float_t> sub_arrC;
- 
+   std::vector<Float_t> std_devs; 
 
   Float_t frac[dm2->GetNbinsX()][dm2->GetNbinsY()]; // array to store fractions                                                           
   for (Int_t i = 0; i < dm2->GetNbinsX(); i++) { // i is looping over sec ID                                                           
@@ -79,10 +79,12 @@ using namespace std;
     // continue;
     // }
     for (Int_t j = 0; j < dm2->GetNbinsY(); j++) { // j is looping over Module ID                                                       
-  
+      
       Float_t num = dm2->GetBinContent(i+1, j+1); // numerator (live)                                      
       Float_t denom = tot->GetBinContent(i+1, j+1); // denominator (total)                                                                       
       Float_t frac_val= ( num / denom) * 100.0; // calculate the fraction                                                                
+      Float_t std_dev = TMath::Sqrt(num * (1.0 - num / denom));
+      std_devs.push_back(std_dev);
 
       frac[i+1][j+1] = frac_val; // store fraction in array                                                                              
       std::cout << "Sec ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
@@ -94,8 +96,34 @@ using namespace std;
 	sub_arrA.push_back(frac_val);
 	//	std::cout << "sub_arrA[" << i << "] = " << frac_val << std::endl;
 	//	std::cout <<  " Size = " << sub_arrA.size() <<" %" << std::endl;
-     }    
+     }
+    
     }
+    // Create a histogram for the standard deviations
+    TH1F* std_dev_hist = new TH1F("std_dev_hist", "Standard Deviations", 24 ,- 0.5, 23.5);
+
+    // Fill the histogram with the standard deviations
+    for (Float_t std_dev : std_devs) {
+      std_dev_hist->Fill(std_dev);
+    }
+
+    // Plot the histogram
+    TCanvas* c3 = new TCanvas("c3", "Standard Deviation Histogram", 800, 600);
+    std_dev_hist->Draw("colz");
+
+    Float_t sum_std_dev = std::accumulate(std_devs.begin(), std_devs.end(), 0.0);
+
+    // Calculate the average standard deviation
+    Float_t avg_std_dev = sum_std_dev / std_devs.size();
+    TH1F* avg_std_dev_hist = new TH1F("avg_std_dev_hist", "Average Standard Deviation", 24, -0.5, 23.5);
+    avg_std_dev_hist->Fill(avg_std_dev);
+
+    TCanvas* c4 = new TCanvas("c4", "Average Standard Deviation Histogram", 800, 600);
+    avg_std_dev_hist->Draw("colz");
+
+    std::cout << "Sum of standard deviations: " << sum_std_dev << std::endl;
+    std::cout << "Average standard deviation: " << avg_std_dev << std::endl;
+
    }
  
   // std::cout << "Live Fraction =" << frac_val << std::endl;
