@@ -2,6 +2,7 @@
 
 #ifndef __CINT__
 #include <algorithm>
+#include <cmath>
 #include "TCanvas.h"
 #include "TApplication.h"
 #include "TH1D.h"
@@ -43,7 +44,7 @@ using namespace std;
 
   std::vector<pair<int,int>> vec; 
 
-  const TString filename3( Form( "/sphenix/u/jamesj3j3/workfest_Charles_mistake/sPHENIXProjects/outfile4.root") );
+  const TString filename3( Form( "/sphenix/u/jamesj3j3/workfest_Charles_mistake/sPHENIXProjects/pedestal-10131-outfile.root") );
 
   //    std::cout << "Analyze - filename2: " << filename2 << std::endl;
   //
@@ -71,9 +72,10 @@ using namespace std;
   // std::vector<Float_t> frac_val;
    std::vector<Float_t> sub_arrA;
    std::vector<Float_t> sub_arrC;
-   std::vector<Float_t> std_devs; 
 
-  Float_t frac[dm2->GetNbinsX()][dm2->GetNbinsY()]; // array to store fractions                                                           
+  Float_t frac[dm2->GetNbinsX()][dm2->GetNbinsY()]; // array to store fractions                                                         
+  std::vector<Float_t> module_std_dev; 
+  
   for (Int_t i = 0; i < dm2->GetNbinsX(); i++) { // i is looping over sec ID                                                           
     //    if(fee->GetBinContent(i)<1){
     // continue;
@@ -83,9 +85,6 @@ using namespace std;
       Float_t num = dm2->GetBinContent(i+1, j+1); // numerator (live)                                      
       Float_t denom = tot->GetBinContent(i+1, j+1); // denominator (total)                                                                       
       Float_t frac_val= ( num / denom) * 100.0; // calculate the fraction                                                                
-      Float_t std_dev = TMath::Sqrt(num * (1.0 - num / denom));
-      std_devs.push_back(std_dev);
-
       frac[i+1][j+1] = frac_val; // store fraction in array                                                                              
       std::cout << "Sec ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
       if (i < 12) {
@@ -96,37 +95,33 @@ using namespace std;
 	sub_arrA.push_back(frac_val);
 	//	std::cout << "sub_arrA[" << i << "] = " << frac_val << std::endl;
 	//	std::cout <<  " Size = " << sub_arrA.size() <<" %" << std::endl;
-     }
+      }
+    }
+      // Calculate the standard deviation for the current module (trying)
+      Float_t module_sum = 0.0;
+      for (Float_t val : (i < 12 ? sub_arrC : sub_arrA)) {
+        module_sum += val;
+      }
+      Float_t module_avg = module_sum / (i < 12 ? sub_arrC.size() : sub_arrA.size());
     
+      Float_t module_dev_sum = 0.0;
+      for (Float_t val : (i < 12 ? sub_arrC : sub_arrA)) {
+        module_dev_sum += (val - module_avg) * (val - module_avg);
+      }
+      Float_t module_std_dev_value = std::sqrt(module_dev_sum / (i < 12 ? sub_arrC.size() : sub_arrA.size()));
+    
+      module_std_dev.push_back(module_std_dev_value);
+      std::cout << "Module ID = " << i + 1 << ", Standard Deviation = " << module_std_dev_value << std::endl;
     }
-    // Create a histogram for the standard deviations
-    TH1F* std_dev_hist = new TH1F("std_dev_hist", "Standard Deviations", 24 ,- 0.5, 23.5);
 
-    // Fill the histogram with the standard deviations
-    for (Float_t std_dev : std_devs) {
-      std_dev_hist->Fill(std_dev);
+    // Find the modules with higher standard deviation values
+    for (Int_t i = 0; i < module_std_dev.size(); i++) {
+      if (module_std_dev[i] > 4.0) {
+	std::cout << "Module ID = " << i + 1 << " has a high standard deviation." << std::endl;
+      }
     }
-
-    // Plot the histogram
-    TCanvas* c3 = new TCanvas("c3", "Standard Deviation Histogram", 800, 600);
-    std_dev_hist->Draw("colz");
-
-    Float_t sum_std_dev = std::accumulate(std_devs.begin(), std_devs.end(), 0.0);
-
-    // Calculate the average standard deviation
-    Float_t avg_std_dev = sum_std_dev / std_devs.size();
-    TH1F* avg_std_dev_hist = new TH1F("avg_std_dev_hist", "Average Standard Deviation", 24, -0.5, 23.5);
-    avg_std_dev_hist->Fill(avg_std_dev);
-
-    TCanvas* c4 = new TCanvas("c4", "Average Standard Deviation Histogram", 800, 600);
-    avg_std_dev_hist->Draw("colz");
-
-    std::cout << "Sum of standard deviations: " << sum_std_dev << std::endl;
-    std::cout << "Average standard deviation: " << avg_std_dev << std::endl;
-
-   }
  
-  // std::cout << "Live Fraction =" << frac_val << std::endl;
+ // std::cout << "Live Fraction =" << frac_val << std::endl;
   // std::cout <<  " Size A = " << sub_arrA.size() << std::endl;
   // std::cout <<  " Size C = " << sub_arrC.size() << std::endl;
 
