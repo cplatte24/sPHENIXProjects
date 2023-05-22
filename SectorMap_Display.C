@@ -1,5 +1,4 @@
-//sPHENIX Sector Mapping of regions R1 R2 and R3 May 18, 2023
-//Written at the Mar 2023 commisioning workfest at Brookhaven National Labaoratory
+//sPHENIX Sector Mapping of modules R1 R2 and R3 May 19, 2023
 //Jennifer James
 #include "TString.h"
 #include "TFile.h"
@@ -18,30 +17,17 @@ void SectorMap_Display( )
 {
   string runNumber = "pedestal-00010305";
 
-  // const string fileName = "/sphenix/user/rosstom/test/testFiles/TPC_ebdc"+sectorNumber+"_"+runNumber+"-0000.prdf_TPCRawDataTree.root";
-
   const char* run_str[24] =  { "00", "01", "02", "03" ,"04", "05", "06", "07", "08", "09", "10" , "11", "12" , "13" , "14", "15" , "16" , "17", "18" , "19", "20", "21" , "22", "23"  };
   double tot[24] = {0};
   double dead[24] = {0};
 
   double tot_ult[24]={0};
   double dead_ult[24]={0};
-/*
-  TH1F *means_dist = new TH1F("means_dist", "Pedestal Runs, Distribution of mean ADC for each channel in TPC",200,-0.5,199.5);
-  means_dist->SetXTitle("Mean ADC");
-  means_dist->SetYTitle("Frequency");
 
-  TH1F *widths_dist = new TH1F("widths_dist", "Pedestal Runs, Distribution of std. dev. ADC for each channel in TPC",100,-0.5,19.5);
-  */
   TFile h_outfile10305("pedestal-10305-outfile.root", "RECREATE");
   TNtuple *h_Alive=new TNtuple("h_Alive","Location Tntuple Cuts","chan_id:fee_id:module_id:pedMean:pedStdi:sec_id");
   TNtuple *h_AliveTot=new TNtuple("h_AliveTot","Location Tntuple No Cuts","chan_id:fee_id:module_id:pedMean:pedStdi:sec_id");
   TNtuple *h_AliveNoise=new TNtuple("h_AliveNoise","Location Tntuple Cuts","chan_id:fee_id:module_id:pedMean:pedStdi:sec_id:noise");
-
- 
-
-  //create TNtuple to produce plots of sector_id:fee_id:channel_id
-  // TH3I *h_layercenters = new TH3I("h_layercenters","Layer centers;Sector ID;FEE ID;Channel ID",24,-0.5,23.5,26,-0.5,25.5,256,-0.5,255.5); //create 3D histogram of sector ID, FEE Id, and Channl ID
 
   for( int i = 0; i < 24; i++ )
   {
@@ -68,7 +54,6 @@ void Ana( TNtuple *Alive, TNtuple *AliveTot, TNtuple *AliveNoise,  char run[2] =
      
   const TString filename2( Form( "/sphenix/u/jamesj3j3/workfest_Charles_mistake/sPHENIXProjects/outputfile_TPC_ebdc%s_pedestal-00010305.root", run) );
 
-  //TFile *infile2 = new TFile(filename2);
   TFile* infile2 = TFile::Open(filename2);
 
   if(!infile2) return;
@@ -102,16 +87,10 @@ void Ana( TNtuple *Alive, TNtuple *AliveTot, TNtuple *AliveNoise,  char run[2] =
      double pedestal = pedMean;
      double noise = pedStdi;
      
-     //if(sec_reg_id.first != -1 && sec_reg_id.second != -1) ntuptup->Fill(1.0*sec_reg_id.first,1.0*(i%256),1.0*sec_reg_id.second);
       AliveTot->Fill(1.0*chan,1.0*fee,1.0*module,pedMean,pedStdi,1.0*sec);
 
       if (isAlive == 1){
-	Alive->Fill(1.0*chan,1.0*fee,1.0*module,pedMean, pedStdi, 1.0*sec); ///addd later
-	//	AliveNoise->Fill(1.0*chan,1.0*fee,1.0*module,pedMean, pedStdi, 1.0*sec, noise); ///addd later                                             
+	Alive->Fill(1.0*chan,1.0*fee,1.0*module,pedMean, pedStdi, 1.0*sec);            
       }
-    //     std::pair<int,int> sec_reg_id = get_sec_reg_id(run, i);
-
    }
-
-
 }
