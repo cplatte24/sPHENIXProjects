@@ -44,7 +44,7 @@ Yay, now there's root files we can build from. Now go into SectorMap_Display.C a
   
   Save and run. Should be pretty quick.
 -----------------------------------------
-Okay, now we can do Efficency_ModuleDisplay.C
+Okay, now we can do Efficiency_ModuleDisplay.C
   
   Again change the input with proper directory and run number:  
     const TString filename3( Form( "./pedestal-10179-outfile.root") );
