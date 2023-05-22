@@ -49,11 +49,11 @@ void Plot_ModuleDisplay2(){
 
   //  std::vector <pair<int,int>> vec1;
 
-  bool skip_empty_fees = true;
+  bool skip_empty_fees =false;
 
   std::vector<pair<int,int>> vec; 
 
-  const TString filename3( Form( "./pedestal-10131-outfile.root") );
+  const TString filename3( Form( "./pedestal-10179-outfile.root") );
   //const TString filename3( Form( "/sphenix/u/jamesj3j3/workfest_Charles_mistake/sPHENIXProjects/pedestal-10131-outfile.root") );
 
   //    std::cout << "Analyze - filename2: " << filename2 << std::endl;
@@ -105,13 +105,13 @@ void Plot_ModuleDisplay2(){
           if( dm2->GetBinContent(k+1,i+1,j+1) >= 1){ //only add to numerator and denominator if FEE has at least 1 live channel
             num+=dm2->GetBinContent(k+1,i+1,j+1);
             denom+=tot->GetBinContent(k+1,i+1,j+1);
-            sum_noise+=h_ALivePedestalNoise->GetBinContent(k+1,i+1,j+1);
+            sum_noise+=h_AlivePedestalNoise->GetBinContent(k+1,i+1,j+1);
           }
         }
         else { //if you don't want to skip empty fees
 	  num+=dm2->GetBinContent(k+1,i+1,j+1);
 	  denom+=tot->GetBinContent(k+1,i+1,j+1); 
-	  sum_noise+=h_ALivePedestalNoise->GetBinContent(k+1,i+1,j+1);
+	  sum_noise+=h_AlivePedestalNoise->GetBinContent(k+1,i+1,j+1);
 	}
       }      
                                                            
@@ -119,7 +119,7 @@ void Plot_ModuleDisplay2(){
       Float_t noise_value = sum_noise/num;
                                                                
       frac[i+1][j+1] = frac_val; // store fraction in array                                                                              
-      std::cout << "Sec ID = " << i+1 << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
+      std::cout << "Sec ID = " << i << ", Module ID = " << j+1 << ", Live fraction = " << frac_val << "%" << std::endl;
       if (i < 12) {
 	sub_arrC.push_back(frac_val);
 	//std::cout <<  " Live fraction C = " << sub_arrC.size() << " %" << std::endl;
@@ -130,31 +130,7 @@ void Plot_ModuleDisplay2(){
 	//std::cout <<  " Size = " << sub_arrA.size() <<" %" << std::endl;
       }
     }
-    // Calculate the standard deviation for the current module
-    Float_t module_sum = 0.0;
-    for (Float_t val : (i < 12 ? sub_arrC : sub_arrA)) {
-      module_sum += val;
-    }
-    Float_t module_avg = module_sum / (i < 12 ? sub_arrC.size() : sub_arrA.size());
-    std::cout << "Sec ID = " << i+1  << ", Average = " << module_avg << std::endl;  
-    Float_t module_dev_sum = 0.0;
-    for (Float_t val : (i < 12 ? sub_arrC : sub_arrA)) {
-      module_dev_sum += (val - module_avg) * (val - module_avg);
-    }
-    Float_t module_std_dev_value = std::sqrt(module_dev_sum / (i < 12 ? sub_arrC.size() : sub_arrA.size()));
-    
-    module_std_dev.push_back(module_std_dev_value);
-    std::cout << "Sec ID = " << i << ", Standard Deviation = " << module_std_dev_value << std::endl;
   }
-
-  // Find the modules with higher standard deviation values
-  for (Int_t i = 0; i < module_std_dev.size(); i++) {
-    if (module_std_dev[i] > 3.0) {
-      std::cout << "Module ID = " << i + 1 << " has a high standard deviation." << std::endl;
-    }
-  }
- 
-  
   // std::cout << "Live Fraction =" << frac_val << std::endl;
   // std::cout <<  " Size A = " << sub_arrA.size() << std::endl;
   // std::cout <<  " Size C = " << sub_arrC.size() << std::endl;
@@ -275,8 +251,8 @@ void Plot_ModuleDisplay2(){
   }
    
   
-  TH2D* dummy_his1 = new TH2D("dummy1", "Alive Channel Fraction North Side (%)", 100, -1.5, 1.5, 100, -1.5, 1.5); //dummy histos for titles
-  TH2D* dummy_his2 = new TH2D("dummy2", "Alive Channel Fraction South Side (%)", 100, -1.5, 1.5, 100, -1.5, 1.5);
+  TH2D* dummy_his1 = new TH2D("dummy1", "10305-Alive Channel Fraction North Side (%)", 100, -1.5, 1.5, 100, -1.5, 1.5); //dummy histos for titles
+  TH2D* dummy_his2 = new TH2D("dummy2", "10305-Alive Channel Fraction South Side (%)", 100, -1.5, 1.5, 100, -1.5, 1.5);
   //TPaveLabels for sector labels
   TPaveLabel* A00 = new TPaveLabel( 1.046586,-0.1938999,1.407997,0.2144871, "18" );
   TPaveLabel* A01 = new TPaveLabel( 0.962076,0.4382608,1.323487,0.8466479 , "17" );
@@ -370,8 +346,8 @@ void Plot_ModuleDisplay2(){
   ErrCSide->SetMaximum(100);
   ErrASide->SetMaximum(100);
 
-  ErrCSide->SetMinimum(90);
-  ErrASide->SetMinimum(90);
+  ErrCSide->SetMinimum(30);
+  ErrASide->SetMinimum(30);
   
 
   //Set Same Scale for A and C side displays
