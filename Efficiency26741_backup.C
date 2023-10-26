@@ -612,10 +612,14 @@ void Efficiency26741_backup()
    pl->Draw();
    */
    Error_Viz_2->Modified();
-   TLatex *x = new TLatex(0.49, -0.15, "X-Axis Label");
-   x->SetTextSize(0.03); // Set the text size                                                                                                                         
+   TLatex *x = new TLatex(-0.03, 0.1725, "#pm 1.5");
+   x->SetTextFont(42); 
+   x->SetTextSize(0.025); // Set the text size                                                                                                                         
    x->SetNDC(kTRUE); // Use normalized coordinates                                                                                                                   
    x->Draw();
+
+   // Error_Viz_1->Modified();
+   Error_Viz_2->Modified();
 
    Error_Viz->cd();
    Error_Viz->Modified();
